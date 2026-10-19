@@ -1,0 +1,53 @@
+# POWDER software UE. Loaded on the ue node (ota-nuc1) by boot.sh.
+# boot.sh copies this file into the RAN Tester checkout, so config_file
+# stays relative to that checkout.
+# Band, ARFCN, PRBs, and the USIM match configs/srsran/ue_uhd.conf.
+# The USIM is a soft SIM, so the UE attempts to attach.
+# autorun starts the UE when the controller comes up. The controller
+# process stays up while that component is running.
+#
+# This file is what the experiment uses. The repo-root spec.yaml stays the
+# MCP spec and is not loaded here.
+
+enable_cli: false
+autorun: true
+
+build_spec:
+  - component: "oran-testing/rtue"
+    branch: "main"
+    pull: true
+
+run_spec:
+  - component: "oran-testing/rtue"
+    name: "rtue_b210"
+    config_file: "powder/configs/ue.conf"
+    rf:
+      type: "b200"
+
+# One controller can start the sniffer on the other node instead of the
+# sniffer node starting it itself. Leave this commented while
+# spec-sniffer.yaml autoruns sni5gect, or the sniffer is started
+# twice. To switch: set autorun false and an empty run_spec on the sniffer
+# node, keep its build_spec so the worker is registered, set enable_cli
+# true only if something else keeps that controller process alive, then
+# uncomment the block below and replace SNIFFER_IP with the sniffer node's
+# control address (the name "sniffer" resolves on the POWDER nodes).
+#
+# external_targets:
+#   - name: "sniffer"
+#     token: "powder-local"
+#     host: "SNIFFER_IP"
+#     port: 1343
+#
+# run_spec:
+#   - component: "oran-testing/rtue"
+#     name: "rtue_b210"
+#     config_file: "powder/configs/ue.conf"
+#     rf:
+#       type: "b200"
+#   - component: "cueltschey/sni5gect-compact"
+#     name: "sni5gect_b210"
+#     config_file: "powder/configs/sniffer.yaml"
+#     rf:
+#       type: "b200"
+#     target: "sniffer"

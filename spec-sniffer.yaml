@@ -1,0 +1,34 @@
+# POWDER sni5gect sniffer. Loaded on the sniffer node (ota-nuc2).
+# This is the sni5gect component (YAML), using the band n3 cell from
+# configs/sni5gect/srsgnb_band3.yaml. It is not the MCP "sniffer" type,
+# which is a separate TOML PDCCH sniffer and has no config in this repo.
+#
+# api_auth is unused while this node starts sni5gect locally. It is here
+# for the commented remote-start block in spec-ue.yaml.
+
+enable_cli: false
+autorun: true
+
+api_auth:
+  - name: "ue-controller"
+    token: "powder-local"
+    scopes:
+      - "start"
+      - "list"
+      - "status"
+      - "stop"
+      - "logs"
+      - "health"
+    allowed_components: ["cueltschey/sni5gect-compact"]
+
+build_spec:
+  - component: "cueltschey/sni5gect-compact"
+    branch: "main"
+    pull: true
+
+run_spec:
+  - component: "cueltschey/sni5gect-compact"
+    name: "sni5gect_b210"
+    config_file: "powder/configs/sniffer.yaml"
+    rf:
+      type: "b200"
