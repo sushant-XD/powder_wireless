@@ -85,18 +85,20 @@ add_b210_nuc("sniffer", params.sniffer_node, "sniffer")
 # to already be running. Uncomment this block, reserve ota-nuc3, and the
 # node will boot start-gnb.sh (srsRAN gNB, band n3, B210).
 #
-# gnb = request.RawPC("gnb")
-# gnb.component_id = "ota-nuc3"
-# gnb.component_manager_id = EMULAB
-# gnb.hardware_type = "nuc8559"
-# gnb.disk_image = params.disk_image
-# if params.autostart:
-#     gnb.addService(rspec.Execute(
-#         shell="/bin/bash",
-#         command="sudo /local/repository/boot.sh gnb"))
-# else:
-#     gnb.addService(rspec.Execute(
-#         shell="/bin/bash",
-#         command="sudo /local/repository/boot.sh install"))
+gnb = request.RawPC("gnb")
+gnb.component_id = "ota-nuc3"
+gnb.component_manager_id = EMULAB
+gnb.hardware_type = "nuc8559"
+gnb.disk_image = params.disk_image
+if params.autostart:
+    gnb.addService(
+        rspec.Execute(shell="/bin/bash", command="sudo /local/repository/boot.sh gnb")
+    )
+else:
+    gnb.addService(
+        rspec.Execute(
+            shell="/bin/bash", command="sudo /local/repository/boot.sh install"
+        )
+    )
 
 pc.printRequestRSpec()
