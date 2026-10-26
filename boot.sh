@@ -9,9 +9,9 @@
 #   install   Docker, UHD, and system_setup.sh only. Nothing is started.
 #   ue        install, then start the software UE on this node's B210
 #   sniffer   install, then start sni5gect on this node's B210
-#   gnb       install, then start the srsRAN gNB (see start-gnb.sh)
+#   gnb       install, then start Open5GS and the srsRAN gNB (see start-gnb.sh)
 #
-# The profile calls "ue" and "sniffer" when the autostart parameter is true.
+# The profile calls ue, sniffer, or gnb when the autostart parameter is true.
 # For a manual experiment, set autostart false (the profile then calls
 # "install" only) and run one of the roles above over ssh.
 

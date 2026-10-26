@@ -1,4 +1,5 @@
 # Band n3 srsRAN gNB from configs/srsran/gnb_uhd.yaml.
+# AMF 10.53.1.2 and bind 10.53.1.1 are the docker-compose.gnb.yml ran network.
 cu_cp:
   amf:
     addr: 10.53.1.2

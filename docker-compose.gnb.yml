@@ -1,0 +1,55 @@
+# Open5GS + srsRAN gNB on the POWDER gNB node (ota-nuc3).
+# 5GC image is built from a sparse clone of srsRAN_Project (see start-gnb.sh).
+# gNB uses the same ghcr.io/cueltschey/srsgnb image as before.
+
+services:
+  5gc:
+    container_name: open5gs_5gc
+    image: powder-open5gs:v2.7.5
+    build:
+      context: ${SRSRAN_OPEN5GS_CTX:-/local/srsran/docker/open5gs}
+      target: open5gs
+      args:
+        OS_VERSION: "22.04"
+        OPEN5GS_VERSION: "v2.7.5"
+        NUM_JOBS: "2"
+    env_file:
+      - ${OPEN_5GS_ENV_FILE:-configs/open5gs.env}
+    privileged: true
+    restart: unless-stopped
+    command: 5gc -c open5gs-5gc.yml
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.20 7777"]
+      interval: 3s
+      timeout: 1s
+      retries: 60
+    networks:
+      ran:
+        ipv4_address: 10.53.1.2
+
+  gnb:
+    container_name: srsran_gnb
+    image: ghcr.io/cueltschey/srsgnb
+    privileged: true
+    cap_add:
+      - SYS_NICE
+    restart: unless-stopped
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+      - ${RTUE:-/local/rtue}/.uhd_images:/usr/local/share/uhd/images:ro
+      - ${PROFILE:-.}/configs/gnb.yaml:/gnb.yaml:ro
+    environment:
+      UHD_IMAGES_DIR: /usr/local/share/uhd/images
+    command: gnb -c /gnb.yaml
+    depends_on:
+      5gc:
+        condition: service_healthy
+    networks:
+      ran:
+        ipv4_address: 10.53.1.1
+
+networks:
+  ran:
+    ipam:
+      config:
+        - subnet: 10.53.1.0/24
